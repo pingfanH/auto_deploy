@@ -6,6 +6,8 @@ pub struct Option{
     pub password: String,
     pub local_path: String,
     pub remote_dir: String,
+    pub command: String,
+    pub config: String,
 }
 impl Option {
     pub fn new() -> Option {
@@ -41,6 +43,18 @@ impl Option {
                     option.remote_dir = args[i+1].clone();
                     continue;
                 }
+                if args[i]=="-conf"{
+                    option.config = args[i+1].clone();
+                    break;
+                }
+                if args[i]=="-cmd" {
+                    option.command = args[i+1].clone();
+                    continue;
+                }
+                println!("unknow option {}",args[i])
+        }
+        if !option.config.is_empty() {
+            return option;
         }
         if option.host.is_empty(){
             println!("host is empty!");
