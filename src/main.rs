@@ -74,6 +74,7 @@ fn upload(session: &mut Session, sftp: &mut ssh2::Sftp, local_dir: &Path, remote
         let mut buffer = Vec::new();
         file.read_to_end(&mut buffer)?;
 
+        println!("upload file: {} -> {}",local_dir.display(),remote_path.display());
         match sftp.stat(remote_path) {
             Ok(attr) => {
                 if attr.is_dir() {
@@ -123,7 +124,10 @@ fn upload(session: &mut Session, sftp: &mut ssh2::Sftp, local_dir: &Path, remote
     // 创建远程文件夹
     let remote_dir_path = Path::new(remote_dir);
     if sftp.opendir(remote_dir_path).is_err() {
+        println!("create remote dir : {}", remote_dir_path.display());
         sftp.mkdir(remote_dir_path, 0o755)?;
+    }else{
+        println!("remote dir : {} exist", remote_dir_path.display());
     }
     // 遍历本地文件夹中的所有文件和子文件夹
     for entry in fs::read_dir(local_dir)? {
@@ -132,15 +136,16 @@ fn upload(session: &mut Session, sftp: &mut ssh2::Sftp, local_dir: &Path, remote
         let file_name = path.file_name().unwrap().to_str().unwrap().to_owned();
         let remote_path_str = format!("{}/{}", remote_dir, file_name);
         let remote_path = Path::new(&remote_path_str);
-        println!("{remote_path_str}");
         if path.is_dir() {
             // 如果是子文件夹，则递归上传
+            println!("uploading dir: {} -> {}",path.display(),remote_path.display());
             upload(session, sftp, &path, &remote_path_str)?;
         } else {
             // 如果是文件，则上传文件内容
             let mut file = File::open(&path)?;
             let mut buffer = Vec::new();
             file.read_to_end(&mut buffer)?;
+            println!("uploading file: {} -> {}",path.display(),remote_path.display());
 
             let mut remote_file = sftp.create(&remote_path)?;
             remote_file.write_all(&buffer)?;

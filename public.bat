@@ -1,0 +1,1 @@
+cargo build && move target\debug\auto_deploy.exe D:\BIN\auto_deploy\
