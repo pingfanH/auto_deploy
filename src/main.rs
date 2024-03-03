@@ -5,8 +5,10 @@ use ssh2::Session;
 mod args;
 mod config;
 mod titan;
+static mut DISABLE:Option<String>=None;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let option = args::Option::new();
+    unsafe { DISABLE = Some(option.disable.clone()) };
 
     // let option=args::Option{
     //     host:"49.232.237.42:22".to_owned(),

@@ -8,6 +8,7 @@ pub struct Option{
     pub remote_dir: String,
     pub command: String,
     pub config: String,
+    pub disable: String,
 }
 impl Option {
     pub fn new() -> Option {
@@ -19,7 +20,7 @@ impl Option {
         for i in 0..args.len() {
                 if args[i]=="--help"{
                    println!(r#"
-                   usage : ./auto_deploy.exe -h ip:22 -u root -p passwd -l project -r /home/ubuntu/project
+                   usage : ./auto_deploy.exe -h ip:22 -u root -p passwd -l project -r /home/ubuntu/project -d "node_modules" -cmd "npm i;npm run prod"
                    "#);
                     std::process::exit(1);
                 }
@@ -51,7 +52,11 @@ impl Option {
                     option.command = args[i+1].clone();
                     continue;
                 }
-                println!("unknow option {}",args[i])
+                if args[i]=="-d" {
+                    option.disable = args[i+1].clone();
+                    continue;
+                }
+                //println!("unknow option {}",args[i])
         }
         if !option.config.is_empty() {
             return option;
@@ -76,7 +81,7 @@ impl Option {
             println!("remote_dir is empty!");
             std::process::exit(1);
         }
-        println!("{:?}",option);
+        //println!("{:?}",option);
         option
     }  
 }
